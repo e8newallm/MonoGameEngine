@@ -10,8 +10,7 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private Viewport viewport;
-    private Rectangle Camera;
-    private int scale;
+    private Camera cam;
 
     private int[,] terrain;
     private KeyboardState prevKeyboard;
@@ -27,10 +26,8 @@ public class Game1 : Game
     protected override void Initialize()
     {
         viewport = _graphics.GraphicsDevice.Viewport;
-        scale = 10;
-        Camera = new Rectangle(0, 25, viewport.Width/scale, (int)((viewport.Width/scale)/viewport.AspectRatio) + 1);
-
         terrain = TerrainGen.genTerrain();
+        cam = new Camera();
         base.Initialize();
     }
 
@@ -48,53 +45,37 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        if(Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+        if(Keyboard.GetState().IsKeyDown(Keys.OemPlus) && prevKeyboard.IsKeyUp(Keys.OemPlus))
         {
-            if(scale < 10)
-            {
-                scale++;
-                int diff = Camera.Width - viewport.Width/scale;
-                Camera.X += diff/2;
-                Camera.Y += diff/2;
-                Camera.Width = viewport.Width/scale;
-                Camera.Height = (int)(Camera.Width/viewport.AspectRatio) + 1;
-            }
+            cam.Zoom += 0.01f;
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.OemPlus))
+        else if(Keyboard.GetState().IsKeyDown(Keys.OemMinus) && prevKeyboard.IsKeyUp(Keys.OemMinus))
         {
-            if(scale > 5)
-            {
-                scale--;
-                int diff = Camera.Width - viewport.Width/scale;
-                Camera.X += diff/2;
-                Camera.Y += diff/2;
-                Camera.Width = viewport.Width/scale;
-                Camera.Height = (int)(Camera.Width/viewport.AspectRatio) + 1;
-            }
+            cam.Zoom -= 0.01f;
         }
 
         if(Keyboard.GetState().IsKeyDown(Keys.A))
         {
-            Camera.X -= 1;
+            cam.X -= 55.0f;
         }
         else if(Keyboard.GetState().IsKeyDown(Keys.D))
         {
-            Camera.X += 1;
+            cam.X += 55.0f;
         }
 
         if(Keyboard.GetState().IsKeyDown(Keys.W))
         {
-            Camera.Y -= 1;
+            cam.Y -= 50.0f;
         }
         else if(Keyboard.GetState().IsKeyDown(Keys.S))
         {
-            Camera.Y += 1;
+            cam.Y += 50.0f;
         }
 
-        if(Camera.X < 0) Camera.X = 0;
-        if(Camera.X + Camera.Width >= terrain.GetLength(0)) Camera.X = terrain.GetLength(0) - Camera.Width;
-        if(Camera.Y < 0) Camera.Y = 0;
-        if(Camera.Y + Camera.Height >= terrain.GetLength(1)) Camera.Y = terrain.GetLength(1) - Camera.Height;
+        if(cam.X < 0.0f) cam.X = 0.0f;
+        if(cam.X + (viewport.Width / cam.Zoom) > terrain.GetLength(0)*50) cam.X = (float)terrain.GetLength(0)*50 - (viewport.Width / cam.Zoom);
+        if(cam.Y < 0.0f) cam.Y = 0.0f;
+        if(cam.Y + (viewport.Width / cam.Zoom) > terrain.GetLength(1)*50) cam.Y = (float)terrain.GetLength(1)*50 - (viewport.Height / cam.Zoom);
 
         prevKeyboard = Keyboard.GetState();
         base.Update(gameTime);
@@ -104,17 +85,15 @@ public class Game1 : Game
     {
         //Console.WriteLine(1000/(float)gameTime.ElapsedGameTime.Milliseconds);
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        int scale = viewport.Width/Camera.Width;
+        _spriteBatch.Begin(transformMatrix: cam.GetTransform());
 
-        Console.WriteLine(Camera + " scale: " + scale);
-        _spriteBatch.Begin();
-        for (int x = Camera.X; x < Camera.X + Camera.Width; x++)
+        for (int x = (int)cam.X/50; x < (int)cam.X + (int)(viewport.Width / cam.Zoom); x++)
         {
-            for (int y = Camera.Y; y < Camera.Y + Camera.Height; y++)
+            for (int y = (int)cam.Y/50; y < (int)cam.Y + (int)(viewport.Height / cam.Zoom); y++)
             {
 
                 if(terrain[x, y] == 1)
-                    _spriteBatch.Draw(cell, new Rectangle((x - Camera.X) * scale, (y - Camera.Y) * scale, scale, scale), Color.White);
+                    _spriteBatch.Draw(cell, new Vector2(x*50, y*50), Color.White);
             }
         }
         _spriteBatch.End();

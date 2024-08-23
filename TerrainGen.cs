@@ -16,6 +16,15 @@ public class TerrainGen
             }
         }
 
+        for (int x = 0; x < 200; x++)
+        {
+            for (int y = 00; y < 200; y++)
+            {
+                if(y == 0 || y == 199) data[x, y] = 1;
+                if(x == 0 || x == 199) data[x, y] = 1;
+            }
+        }
+
         return data;
     }
 }
