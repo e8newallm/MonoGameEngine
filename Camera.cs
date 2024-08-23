@@ -1,20 +1,16 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace GameMono;
 
-public class Camera
+public class Camera(Viewport view)
 {
     private float _zoom = 0.2f;
     private float _x = 0.0f;
     private float _y = 0.0f;
-    private Viewport viewport;
-
-    public Camera(Viewport view)
-    {
-        viewport = view;
-    }
+    private Viewport viewport = view;
 
     public float Zoom
     {
@@ -47,6 +43,11 @@ public class Camera
     public float GetCameraHeight()
     {
         return viewport.Height / Zoom;
+    }
+
+    public Vector2 ViewToCell(MouseState mouse)
+    {
+        return new Vector2((int)((mouse.X + (_x*_zoom)) / (Constants.CELLSIZE * _zoom)), (int)((mouse.Y + (_y*_zoom)) / (Constants.CELLSIZE * _zoom)));
     }
 
     public Matrix GetTransform()

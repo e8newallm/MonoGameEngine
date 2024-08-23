@@ -5,15 +5,23 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GameMono;
 
+public static class Constants
+{
+  public const int CELLSIZE = 50;
+}
+
+
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private SpriteFont font;
 
     private Camera cam;
 
     private int[,] terrain;
     private KeyboardState prevKeyboard;
+    private MouseState prevMouse;
     private Texture2D cell;
 
     public Game1()
@@ -34,47 +42,56 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         cell = Content.Load<Texture2D>("Tile");
+        font = Content.Load<SpriteFont>("DebugFont");
     }
 
     protected override void Update(GameTime gameTime)
     {
-        //Console.WriteLine(gameTime.ElapsedGameTime);
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+        KeyboardState keyboard = Keyboard.GetState();
+        MouseState mouse = Mouse.GetState();
+
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
             Exit();
 
-        if(Keyboard.GetState().IsKeyDown(Keys.OemPlus) && prevKeyboard.IsKeyUp(Keys.OemPlus))
+        if(keyboard.IsKeyDown(Keys.OemPlus) && prevKeyboard.IsKeyUp(Keys.OemPlus))
         {
             cam.Zoom += 0.01f;
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.OemMinus) && prevKeyboard.IsKeyUp(Keys.OemMinus))
+        else if(keyboard.IsKeyDown(Keys.OemMinus) && prevKeyboard.IsKeyUp(Keys.OemMinus))
         {
             cam.Zoom -= 0.01f;
         }
 
-        if(Keyboard.GetState().IsKeyDown(Keys.A))
+        if(keyboard.IsKeyDown(Keys.A))
         {
-            cam.X -= 55.0f;
+            cam.X -= 50.0f;
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.D))
+        else if(keyboard.IsKeyDown(Keys.D))
         {
-            cam.X += 55.0f;
+            cam.X += 50.0f;
         }
 
-        if(Keyboard.GetState().IsKeyDown(Keys.W))
+        if(keyboard.IsKeyDown(Keys.W))
         {
             cam.Y -= 50.0f;
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.S))
+        else if(keyboard.IsKeyDown(Keys.S))
         {
             cam.Y += 50.0f;
         }
 
         if(cam.X < 0.0f) cam.X = 0.0f;
-        if(cam.X + cam.GetCameraWidth() > terrain.GetLength(0)*50) cam.X = (float)terrain.GetLength(0)*50 - cam.GetCameraWidth();
+        if(cam.X + cam.GetCameraWidth() > terrain.GetLength(0)*Constants.CELLSIZE) cam.X = (float)terrain.GetLength(0)*Constants.CELLSIZE - cam.GetCameraWidth();
         if(cam.Y < 0.0f) cam.Y = 0.0f;
-        if(cam.Y + cam.GetCameraHeight() > terrain.GetLength(1)*50) cam.Y = (float)terrain.GetLength(1)*50 - cam.GetCameraHeight();
+        if(cam.Y + cam.GetCameraHeight() > terrain.GetLength(1)*Constants.CELLSIZE) cam.Y = (float)terrain.GetLength(1)*Constants.CELLSIZE - cam.GetCameraHeight();
 
-        prevKeyboard = Keyboard.GetState();
+        if(prevMouse.LeftButton == ButtonState.Pressed && mouse.LeftButton == ButtonState.Released)
+        {
+            Console.WriteLine("Clicked cell is: " + cam.ViewToCell(mouse));
+        }
+
+        prevKeyboard = keyboard;
+        prevMouse = mouse;
         base.Update(gameTime);
     }
 
@@ -85,16 +102,20 @@ public class Game1 : Game
 
         //Drawing cells to screen
         _spriteBatch.Begin(transformMatrix: cam.GetTransform());
-        float lastX = Math.Min(terrain.GetLength(0), (int)cam.X/50 + cam.GetCameraWidth()/50 + 1);
-        float lastY = Math.Min(terrain.GetLength(1), (int)cam.Y/50 + cam.GetCameraHeight()/50 + 1);
-        for (int x = (int)cam.X/50; x < lastX; x++)
+        float lastX = Math.Min(terrain.GetLength(0), (int)cam.X/Constants.CELLSIZE + cam.GetCameraWidth()/Constants.CELLSIZE + 1);
+        float lastY = Math.Min(terrain.GetLength(1), (int)cam.Y/Constants.CELLSIZE + cam.GetCameraHeight()/Constants.CELLSIZE + 1);
+        for (int x = (int)cam.X/Constants.CELLSIZE; x < lastX; x++)
         {
-            for (int y = (int)cam.Y/50; y < lastY; y++)
+            for (int y = (int)cam.Y/Constants.CELLSIZE; y < lastY; y++)
             {
                 if(terrain[x, y] == 1)
-                    _spriteBatch.Draw(cell, new Vector2(x*50, y*50), Color.White);
+                    _spriteBatch.Draw(cell, new Vector2(x*Constants.CELLSIZE, y*Constants.CELLSIZE), Color.White);
             }
         }
+        _spriteBatch.End();
+
+        _spriteBatch.Begin();
+        _spriteBatch.DrawString(font, cam.ViewToCell(prevMouse).ToString(), new Vector2(10, 10), Color.Red);
         _spriteBatch.End();
 
         base.Draw(gameTime);
