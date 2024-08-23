@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GameMono;
 
@@ -8,6 +9,12 @@ public class Camera
     private float _zoom = 0.2f;
     private float _x = 0.0f;
     private float _y = 0.0f;
+    private Viewport viewport;
+
+    public Camera(Viewport view)
+    {
+        viewport = view;
+    }
 
     public float Zoom
     {
@@ -25,6 +32,21 @@ public class Camera
     {
         get { return _y;}
         set { _y = value;}
+    }
+
+    public void UpdateViewport(Viewport view)
+    {
+        viewport = view;
+    }
+
+    public float GetCameraWidth()
+    {
+        return viewport.Width / Zoom;
+    }
+
+    public float GetCameraHeight()
+    {
+        return viewport.Height / Zoom;
     }
 
     public Matrix GetTransform()

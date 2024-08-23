@@ -9,7 +9,7 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private Viewport viewport;
+
     private Camera cam;
 
     private int[,] terrain;
@@ -25,9 +25,8 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        viewport = _graphics.GraphicsDevice.Viewport;
         terrain = TerrainGen.genTerrain();
-        cam = new Camera();
+        cam = new Camera(_graphics.GraphicsDevice.Viewport);
         base.Initialize();
     }
 
@@ -35,8 +34,6 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         cell = Content.Load<Texture2D>("Tile");
-
-        // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)
@@ -73,9 +70,9 @@ public class Game1 : Game
         }
 
         if(cam.X < 0.0f) cam.X = 0.0f;
-        if(cam.X + (viewport.Width / cam.Zoom) > terrain.GetLength(0)*50) cam.X = (float)terrain.GetLength(0)*50 - (viewport.Width / cam.Zoom);
+        if(cam.X + cam.GetCameraWidth() > terrain.GetLength(0)*50) cam.X = (float)terrain.GetLength(0)*50 - cam.GetCameraWidth();
         if(cam.Y < 0.0f) cam.Y = 0.0f;
-        if(cam.Y + (viewport.Width / cam.Zoom) > terrain.GetLength(1)*50) cam.Y = (float)terrain.GetLength(1)*50 - (viewport.Height / cam.Zoom);
+        if(cam.Y + cam.GetCameraHeight() > terrain.GetLength(1)*50) cam.Y = (float)terrain.GetLength(1)*50 - cam.GetCameraHeight();
 
         prevKeyboard = Keyboard.GetState();
         base.Update(gameTime);
@@ -85,13 +82,15 @@ public class Game1 : Game
     {
         //Console.WriteLine(1000/(float)gameTime.ElapsedGameTime.Milliseconds);
         GraphicsDevice.Clear(Color.CornflowerBlue);
+
+        //Drawing cells to screen
         _spriteBatch.Begin(transformMatrix: cam.GetTransform());
-
-        for (int x = (int)cam.X/50; x < (int)cam.X + (int)(viewport.Width / cam.Zoom); x++)
+        float lastX = Math.Min(terrain.GetLength(0), (int)cam.X/50 + cam.GetCameraWidth()/50 + 1);
+        float lastY = Math.Min(terrain.GetLength(1), (int)cam.Y/50 + cam.GetCameraHeight()/50 + 1);
+        for (int x = (int)cam.X/50; x < lastX; x++)
         {
-            for (int y = (int)cam.Y/50; y < (int)cam.Y + (int)(viewport.Height / cam.Zoom); y++)
+            for (int y = (int)cam.Y/50; y < lastY; y++)
             {
-
                 if(terrain[x, y] == 1)
                     _spriteBatch.Draw(cell, new Vector2(x*50, y*50), Color.White);
             }
