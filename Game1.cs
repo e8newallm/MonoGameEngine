@@ -7,9 +7,8 @@ namespace GameMono;
 
 public static class Constants
 {
-  public const int CELLSIZE = 50;
+    public const int CELLSIZE = 50;
 }
-
 
 public class Game1 : Game
 {
@@ -19,7 +18,7 @@ public class Game1 : Game
 
     private Camera cam;
 
-    private int[,] terrain;
+    private World terrain = new World(1000, 1000);
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
     private Texture2D cell;
@@ -33,7 +32,6 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        terrain = TerrainGen.genTerrain();
         cam = new Camera(_graphics.GraphicsDevice.Viewport);
         base.Initialize();
     }
@@ -81,13 +79,17 @@ public class Game1 : Game
         }
 
         if(cam.X < 0.0f) cam.X = 0.0f;
-        if(cam.X + cam.GetCameraWidth() > terrain.GetLength(0)*Constants.CELLSIZE) cam.X = (float)terrain.GetLength(0)*Constants.CELLSIZE - cam.GetCameraWidth();
+        if(cam.X + cam.GetCameraWidth() > terrain.Width*Constants.CELLSIZE) cam.X = (float)terrain.Width*Constants.CELLSIZE - cam.GetCameraWidth();
         if(cam.Y < 0.0f) cam.Y = 0.0f;
-        if(cam.Y + cam.GetCameraHeight() > terrain.GetLength(1)*Constants.CELLSIZE) cam.Y = (float)terrain.GetLength(1)*Constants.CELLSIZE - cam.GetCameraHeight();
+        if(cam.Y + cam.GetCameraHeight() > terrain.Height*Constants.CELLSIZE) cam.Y = (float)terrain.Height*Constants.CELLSIZE - cam.GetCameraHeight();
 
-        if(prevMouse.LeftButton == ButtonState.Pressed && mouse.LeftButton == ButtonState.Released)
+        if(prevMouse.LeftButton == ButtonState.Pressed)
         {
-            Console.WriteLine("Clicked cell is: " + cam.ViewToCell(mouse));
+            terrain[cam.ViewToCell(mouse)] = 1;
+        }
+        else if(prevMouse.RightButton == ButtonState.Pressed)
+        {
+            terrain[cam.ViewToCell(mouse)] = 0;
         }
 
         prevKeyboard = keyboard;
@@ -97,13 +99,12 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        //Console.WriteLine(1000/(float)gameTime.ElapsedGameTime.Milliseconds);
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
         //Drawing cells to screen
         _spriteBatch.Begin(transformMatrix: cam.GetTransform());
-        float lastX = Math.Min(terrain.GetLength(0), (int)cam.X/Constants.CELLSIZE + cam.GetCameraWidth()/Constants.CELLSIZE + 1);
-        float lastY = Math.Min(terrain.GetLength(1), (int)cam.Y/Constants.CELLSIZE + cam.GetCameraHeight()/Constants.CELLSIZE + 1);
+        float lastX = Math.Min(terrain.Width, (int)cam.X/Constants.CELLSIZE + cam.GetCameraWidth()/Constants.CELLSIZE + 1);
+        float lastY = Math.Min(terrain.Height, (int)cam.Y/Constants.CELLSIZE + cam.GetCameraHeight()/Constants.CELLSIZE + 1);
         for (int x = (int)cam.X/Constants.CELLSIZE; x < lastX; x++)
         {
             for (int y = (int)cam.Y/Constants.CELLSIZE; y < lastY; y++)
@@ -115,7 +116,7 @@ public class Game1 : Game
         _spriteBatch.End();
 
         _spriteBatch.Begin();
-        _spriteBatch.DrawString(font, cam.ViewToCell(prevMouse).ToString(), new Vector2(10, 10), Color.Red);
+        _spriteBatch.DrawString(font, cam.ViewToCell(prevMouse).ToString(), new Vector2(10, 10), Color.White);
         _spriteBatch.End();
 
         base.Draw(gameTime);
