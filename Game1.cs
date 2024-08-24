@@ -18,7 +18,7 @@ public class Game1 : Game
 
     private Camera cam;
 
-    private World terrain = new World(1000, 1000);
+    private readonly World terrain = new(1000, 1000);
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
     private Texture2D cell;
@@ -51,45 +51,35 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
             Exit();
 
-        if(keyboard.IsKeyDown(Keys.OemPlus) && prevKeyboard.IsKeyUp(Keys.OemPlus))
-        {
-            cam.Zoom += 0.01f;
-        }
-        else if(keyboard.IsKeyDown(Keys.OemMinus) && prevKeyboard.IsKeyUp(Keys.OemMinus))
-        {
-            cam.Zoom -= 0.01f;
-        }
+        cam.Zoom += (prevMouse.ScrollWheelValue - mouse.ScrollWheelValue)/120 * 0.02f;
 
         if(keyboard.IsKeyDown(Keys.A))
-        {
             cam.X -= 50.0f;
-        }
+
         else if(keyboard.IsKeyDown(Keys.D))
-        {
             cam.X += 50.0f;
-        }
+
 
         if(keyboard.IsKeyDown(Keys.W))
-        {
             cam.Y -= 50.0f;
-        }
+
         else if(keyboard.IsKeyDown(Keys.S))
-        {
             cam.Y += 50.0f;
-        }
 
         if(cam.X < 0.0f) cam.X = 0.0f;
         if(cam.X + cam.GetCameraWidth() > terrain.Width*Constants.CELLSIZE) cam.X = (float)terrain.Width*Constants.CELLSIZE - cam.GetCameraWidth();
         if(cam.Y < 0.0f) cam.Y = 0.0f;
         if(cam.Y + cam.GetCameraHeight() > terrain.Height*Constants.CELLSIZE) cam.Y = (float)terrain.Height*Constants.CELLSIZE - cam.GetCameraHeight();
 
-        if(prevMouse.LeftButton == ButtonState.Pressed)
+        Vector2 cell = cam.ViewToCell(mouse);
+        if((int)cell.X != -1 && this.IsActive)
         {
-            terrain[cam.ViewToCell(mouse)] = 1;
-        }
-        else if(prevMouse.RightButton == ButtonState.Pressed)
-        {
-            terrain[cam.ViewToCell(mouse)] = 0;
+            Console.WriteLine(cell.X + " " + cell.Y);
+            if(prevMouse.LeftButton == ButtonState.Pressed)
+                terrain[cell] = 1;
+
+            else if(prevMouse.RightButton == ButtonState.Pressed)
+                terrain[cell] = 0;
         }
 
         prevKeyboard = keyboard;

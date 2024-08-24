@@ -15,7 +15,7 @@ public class Camera(Viewport view)
     public float Zoom
     {
         get { return _zoom;}
-        set { if(value >= 0.2f && value <= 0.3f) _zoom = value;}
+        set { if(value >= 0.1f && value <= 0.3f) _zoom = value;}
     }
 
     public float X
@@ -47,7 +47,10 @@ public class Camera(Viewport view)
 
     public Vector2 ViewToCell(MouseState mouse)
     {
-        return new Vector2((int)((mouse.X + (_x*_zoom)) / (Constants.CELLSIZE * _zoom)), (int)((mouse.Y + (_y*_zoom)) / (Constants.CELLSIZE * _zoom)));
+        if(viewport.Bounds.Contains(mouse.Position))
+            return new Vector2((int)((mouse.X + (_x*_zoom)) / (Constants.CELLSIZE * _zoom)), (int)((mouse.Y + (_y*_zoom)) / (Constants.CELLSIZE * _zoom)));
+        else
+            return new Vector2(-1.0f, -1.0f);
     }
 
     public Matrix GetTransform()
