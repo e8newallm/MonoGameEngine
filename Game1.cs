@@ -18,7 +18,7 @@ public class Game1 : Game
 
     private Camera cam;
 
-    private readonly World terrain = new(1000, 1000);
+    private readonly World terrain = new(1000, 600, TerrainGenTypes.surfaceGen);
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
     private Texture2D cell;
@@ -51,20 +51,20 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
             Exit();
 
-        cam.Zoom += (prevMouse.ScrollWheelValue - mouse.ScrollWheelValue)/120 * 0.02f;
+        cam.Zoom -= (prevMouse.ScrollWheelValue - mouse.ScrollWheelValue)/120 * 0.02f;
 
         if(keyboard.IsKeyDown(Keys.A))
-            cam.X -= 50.0f;
+            cam.X -= 70.0f;
 
         else if(keyboard.IsKeyDown(Keys.D))
-            cam.X += 50.0f;
+            cam.X += 70.0f;
 
 
         if(keyboard.IsKeyDown(Keys.W))
-            cam.Y -= 50.0f;
+            cam.Y -= 70.0f;
 
         else if(keyboard.IsKeyDown(Keys.S))
-            cam.Y += 50.0f;
+            cam.Y += 70.0f;
 
         if(cam.X < 0.0f) cam.X = 0.0f;
         if(cam.X + cam.GetCameraWidth() > terrain.Width*Constants.CELLSIZE) cam.X = (float)terrain.Width*Constants.CELLSIZE - cam.GetCameraWidth();
@@ -74,7 +74,6 @@ public class Game1 : Game
         Vector2 cell = cam.ViewToCell(mouse);
         if((int)cell.X != -1 && this.IsActive)
         {
-            Console.WriteLine(cell.X + " " + cell.Y);
             if(prevMouse.LeftButton == ButtonState.Pressed)
                 terrain[cell] = 1;
 

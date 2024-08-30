@@ -1,11 +1,11 @@
-using System.Data;
+using System;
 using Microsoft.Xna.Framework;
 
 namespace GameMono;
 
-public class World(int width, int height)
+public class World(int width, int height, Func<int, int, int[,]> Surface)
 {
-    readonly int[,] Map = TerrainGen.genTerrain(width, height);
+    readonly int[,] Map = TerrainGen.genTerrain(width, height, Surface);
     public int Width { get => Map.GetLength(0); }
     public int Height { get => Map.GetLength(1); }
 
