@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
+
+namespace GameMono;
 
 public class TerrainGen
 {
-    public static int[,] genTerrain(int width, int height, Func<int, int, int[,]> Surface)
+    public static Material[,] genTerrain(int width, int height, Func<int, int, Material[,]> Surface)
     {
-        int[,] data = Surface(width, height);
+        Material[,] data = Surface(width, height);
         return data;
     }
 
@@ -14,16 +17,16 @@ public class TerrainGen
 
 public static class TerrainGenTypes
 {
-    public static int[,] surfaceGen(int width, int height)
+    public static Material[,] surfaceGen(int width, int height)
     {
-        int[,] data = new int[width, height];
+        Material[,] data = new Material[width, height];
         Random rand = new Random();
 
         for(int x = 0; x < data.GetLength(0); x++)
         {
             for(int y = 0; y < data.GetLength(1); y++)
             {
-                data[x, y] = 0;
+                data[x, y] = Material.Nothing;
             }
 
         }
@@ -54,7 +57,7 @@ public static class TerrainGenTypes
         {
             for(int y = (int)heightmap[x].Y; y < data.GetLength(1); y++)
             {
-                data[x, y] = 1;
+                data[x, y] = Material.Mats.ElementAt(rand.Next(Material.Mats.Count)).Value;
             }
 
         }

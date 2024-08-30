@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace GameMono;
 
@@ -39,7 +40,10 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        cell = Content.Load<Texture2D>("Tile");
+        foreach(KeyValuePair<String, Material> mat in Material.Mats)
+        {
+            mat.Value.Texture = Content.Load<Texture2D>(mat.Value.TextureName);
+        }
         font = Content.Load<SpriteFont>("DebugFont");
     }
 
@@ -75,10 +79,10 @@ public class Game1 : Game
         if((int)cell.X != -1 && this.IsActive)
         {
             if(prevMouse.LeftButton == ButtonState.Pressed)
-                terrain[cell] = 1;
+                terrain[cell] = Material.Mats["Dirt"];
 
             else if(prevMouse.RightButton == ButtonState.Pressed)
-                terrain[cell] = 0;
+                terrain[cell] = Material.Nothing;
         }
 
         prevKeyboard = keyboard;
@@ -94,12 +98,12 @@ public class Game1 : Game
         _spriteBatch.Begin(transformMatrix: cam.GetTransform());
         float lastX = Math.Min(terrain.Width, (int)cam.X/Constants.CELLSIZE + cam.GetCameraWidth()/Constants.CELLSIZE + 1);
         float lastY = Math.Min(terrain.Height, (int)cam.Y/Constants.CELLSIZE + cam.GetCameraHeight()/Constants.CELLSIZE + 1);
-        for (int x = (int)cam.X/Constants.CELLSIZE; x < lastX; x++)
+        for (uint x = (uint)cam.X/Constants.CELLSIZE; x < lastX; x++)
         {
-            for (int y = (int)cam.Y/Constants.CELLSIZE; y < lastY; y++)
+            for (uint y = (uint)cam.Y/Constants.CELLSIZE; y < lastY; y++)
             {
-                if(terrain[x, y] == 1)
-                    _spriteBatch.Draw(cell, new Vector2(x*Constants.CELLSIZE, y*Constants.CELLSIZE), Color.White);
+                if(terrain[x, y] != Material.Nothing)
+                    _spriteBatch.Draw(terrain[x, y].Texture, new Vector2(x*Constants.CELLSIZE, y*Constants.CELLSIZE), Color.White);
             }
         }
         _spriteBatch.End();

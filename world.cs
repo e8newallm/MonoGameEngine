@@ -3,20 +3,22 @@ using Microsoft.Xna.Framework;
 
 namespace GameMono;
 
-public class World(int width, int height, Func<int, int, int[,]> Surface)
+public class World(int width, int height, Func<int, int, Material[,]> Surface)
 {
-    readonly int[,] Map = TerrainGen.genTerrain(width, height, Surface);
-    public int Width { get => Map.GetLength(0); }
-    public int Height { get => Map.GetLength(1); }
+    readonly Material[,] Map = TerrainGen.genTerrain(width, height, Surface);
+    private readonly int _width = width;
+    private readonly int _height = height;
+    public int Width { get => _width; }
+    public int Height { get => _height; }
 
-    public int this[int x, int y]
+    public Material this[uint x, uint y]
     {
         get => Map[x,y];
         set => Map[x,y] = value;
     }
-    public int this[Vector2 cell]
+    public Material this[Vector2 cell]
     {
-        get => Map[(int)cell.X, (int)cell.Y];
-        set => Map[(int)cell.X, (int)cell.Y] = value;
+        get => Map[(uint)cell.X, (uint)cell.Y];
+        set => Map[(uint)cell.X, (uint)cell.Y] = value;
     }
 }
