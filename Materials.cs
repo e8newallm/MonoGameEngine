@@ -15,6 +15,8 @@ public class Material(String textureName)
         set { _texture = value;}
     }
 
+    public bool IsNothing() { return TextureName == ""; }
+
     static readonly public Dictionary<String, Material> Mats = new()
     {
         {"Dirt", new("Tile")},

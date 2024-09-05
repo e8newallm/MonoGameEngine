@@ -1,2 +1,3 @@
-./build.sh
-./run.sh
+if ./build.sh ; then
+    ./run.sh
+fi

@@ -9,6 +9,7 @@ namespace GameMono;
 public static class Constants
 {
     public const int CELLSIZE = 50;
+    public const int HALFCELLSIZE = CELLSIZE/2;
 }
 
 public class Game1 : Game
@@ -22,7 +23,8 @@ public class Game1 : Game
     private readonly World terrain = new(1000, 600, TerrainGenTypes.surfaceGen);
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
-    private Texture2D cell;
+
+    private PhysicsObj testObj = new(new(4.0f, 0.0f), new(2.0f, 2.0f));
 
     public Game1()
     {
@@ -52,6 +54,9 @@ public class Game1 : Game
         KeyboardState keyboard = Keyboard.GetState();
         MouseState mouse = Mouse.GetState();
 
+        if(keyboard.IsKeyDown(Keys.Space) && prevKeyboard.IsKeyUp(Keys.Space))
+            testObj.Update(terrain);
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
             Exit();
 
@@ -62,7 +67,6 @@ public class Game1 : Game
 
         else if(keyboard.IsKeyDown(Keys.D))
             cam.X += 70.0f;
-
 
         if(keyboard.IsKeyDown(Keys.W))
             cam.Y -= 70.0f;
@@ -106,6 +110,8 @@ public class Game1 : Game
                     _spriteBatch.Draw(terrain[x, y].Texture, new Vector2(x*Constants.CELLSIZE, y*Constants.CELLSIZE), Color.White);
             }
         }
+
+        testObj.Draw(_spriteBatch);
         _spriteBatch.End();
 
         _spriteBatch.Begin();
