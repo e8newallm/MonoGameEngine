@@ -9,7 +9,6 @@ namespace GameMono;
 public static class Constants
 {
     public const int CELLSIZE = 50;
-    public const int HALFCELLSIZE = CELLSIZE/2;
 }
 
 public class Game1 : Game
@@ -24,7 +23,8 @@ public class Game1 : Game
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
 
-    private PhysicsObj testObj = new(new(4.0f, 0.0f), new(2.0f, 2.0f));
+    private Player testObj = new(new(4.0f, 0.0f), new(2.0f, 2.0f));
+    private bool running = false;
 
     public Game1()
     {
@@ -54,15 +54,15 @@ public class Game1 : Game
         KeyboardState keyboard = Keyboard.GetState();
         MouseState mouse = Mouse.GetState();
 
-        if(keyboard.IsKeyDown(Keys.Space) && prevKeyboard.IsKeyUp(Keys.Space))
+        if(running)
             testObj.Update(terrain);
 
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
-            Exit();
+        if(keyboard.IsKeyDown(Keys.P) && prevKeyboard.IsKeyUp(Keys.P))
+            running = !running;
 
         cam.Zoom -= (prevMouse.ScrollWheelValue - mouse.ScrollWheelValue)/120 * 0.02f;
 
-        if(keyboard.IsKeyDown(Keys.A))
+        /*if(keyboard.IsKeyDown(Keys.A))
             cam.X -= 70.0f;
 
         else if(keyboard.IsKeyDown(Keys.D))
@@ -72,7 +72,9 @@ public class Game1 : Game
             cam.Y -= 70.0f;
 
         else if(keyboard.IsKeyDown(Keys.S))
-            cam.Y += 70.0f;
+            cam.Y += 70.0f;*/
+
+        cam.MoveTo(testObj.Position);
 
         if(cam.X < 0.0f) cam.X = 0.0f;
         if(cam.X + cam.GetCameraWidth() > terrain.Width*Constants.CELLSIZE) cam.X = (float)terrain.Width*Constants.CELLSIZE - cam.GetCameraWidth();
@@ -116,6 +118,7 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
         _spriteBatch.DrawString(font, cam.ViewToCell(prevMouse).ToString(), new Vector2(10, 10), Color.White);
+        if(!running) _spriteBatch.DrawString(font, "Paused!", new Vector2(10, 60), Color.White);
         _spriteBatch.End();
 
         base.Draw(gameTime);

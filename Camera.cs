@@ -57,4 +57,10 @@ public class Camera(Viewport view)
     {
         return Matrix.CreateTranslation(new Vector3(-_x, -_y, 0)) * Matrix.CreateScale(_zoom, _zoom, 1);
     }
+
+    public void MoveTo(Vector2 position)
+    {
+        _x = position.X * Constants.CELLSIZE - GetCameraWidth()/2;
+        _y = position.Y * Constants.CELLSIZE - GetCameraHeight()/2;
+    }
 }
