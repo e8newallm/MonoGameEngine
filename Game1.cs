@@ -24,7 +24,7 @@ public class Game1 : Game
     private MouseState prevMouse;
 
     private Player testObj = new(new(4.0f, 0.0f), new(2.0f, 2.0f));
-    private bool running = false;
+    public bool running = false;
 
     public Game1()
     {
@@ -54,25 +54,14 @@ public class Game1 : Game
         KeyboardState keyboard = Keyboard.GetState();
         MouseState mouse = Mouse.GetState();
 
-        if(running)
-            testObj.Update(terrain);
-
         if(keyboard.IsKeyDown(Keys.P) && prevKeyboard.IsKeyUp(Keys.P))
             running = !running;
 
+        if(running)
+            testObj.Update(terrain, gameTime);
+
+
         cam.Zoom -= (prevMouse.ScrollWheelValue - mouse.ScrollWheelValue)/120 * 0.02f;
-
-        /*if(keyboard.IsKeyDown(Keys.A))
-            cam.X -= 70.0f;
-
-        else if(keyboard.IsKeyDown(Keys.D))
-            cam.X += 70.0f;
-
-        if(keyboard.IsKeyDown(Keys.W))
-            cam.Y -= 70.0f;
-
-        else if(keyboard.IsKeyDown(Keys.S))
-            cam.Y += 70.0f;*/
 
         cam.MoveTo(testObj.Position);
 
@@ -94,6 +83,7 @@ public class Game1 : Game
         prevKeyboard = keyboard;
         prevMouse = mouse;
         base.Update(gameTime);
+        //running = false;
     }
 
     protected override void Draw(GameTime gameTime)

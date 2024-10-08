@@ -19,7 +19,7 @@ public static class TerrainGenTypes
 {
     public static Material[,] surfaceGen(int width, int height)
     {
-        Material[,] data = new Material[width, height];
+        Material[,] data = new Material[width+1, height+1];
         Random rand = new Random();
 
         for(int x = 0; x < data.GetLength(0); x++)
@@ -53,9 +53,9 @@ public static class TerrainGenTypes
             }
         }
 
-        for(int x = 0; x < data.GetLength(0); x++)
+        for(int x = 0; x < width; x++)
         {
-            for(int y = (int)heightmap[x].Y; y < data.GetLength(1); y++)
+            for(int y = (int)heightmap[x].Y; y < height; y++)
             {
                 data[x, y] = Material.Mats.ElementAt(rand.Next(Material.Mats.Count)).Value;
             }
