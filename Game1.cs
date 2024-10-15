@@ -13,7 +13,7 @@ public static class Constants
 
 public class Game1 : Game
 {
-    private GraphicsDeviceManager _graphics;
+    private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private SpriteFont font;
 
@@ -23,8 +23,7 @@ public class Game1 : Game
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
 
-    private Player testObj = new(new(4.0f, 0.0f), new(2.0f, 2.0f));
-    public bool running = false;
+    private readonly Player testObj = new(new(4.0f, 0.0f), new(1.5f, 2.5f));
 
     public Game1()
     {
@@ -55,16 +54,18 @@ public class Game1 : Game
         MouseState mouse = Mouse.GetState();
 
         if(keyboard.IsKeyDown(Keys.P) && prevKeyboard.IsKeyUp(Keys.P))
-            running = !running;
+            GameState.Paused = !GameState.Paused;
+        else if(keyboard.IsKeyDown(Keys.O) && prevKeyboard.IsKeyUp(Keys.O))
+            GameState.DebugStep();
 
-        if(running)
+        if(!GameState.Paused)
             testObj.Update(terrain, gameTime);
 
+        GameState.DebugUnstep();
 
+        // Camera positioning
         cam.Zoom -= (prevMouse.ScrollWheelValue - mouse.ScrollWheelValue)/120 * 0.02f;
-
         cam.MoveTo(testObj.Position);
-
         if(cam.X < 0.0f) cam.X = 0.0f;
         if(cam.X + cam.GetCameraWidth() > terrain.Width*Constants.CELLSIZE) cam.X = (float)terrain.Width*Constants.CELLSIZE - cam.GetCameraWidth();
         if(cam.Y < 0.0f) cam.Y = 0.0f;
@@ -83,7 +84,6 @@ public class Game1 : Game
         prevKeyboard = keyboard;
         prevMouse = mouse;
         base.Update(gameTime);
-        //running = false;
     }
 
     protected override void Draw(GameTime gameTime)
@@ -108,7 +108,7 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
         _spriteBatch.DrawString(font, cam.ViewToCell(prevMouse).ToString(), new Vector2(10, 10), Color.White);
-        if(!running) _spriteBatch.DrawString(font, "Paused!", new Vector2(10, 60), Color.White);
+        if(GameState.Paused) _spriteBatch.DrawString(font, "Paused!", new Vector2(10, 60), Color.White);
         _spriteBatch.End();
 
         base.Draw(gameTime);
