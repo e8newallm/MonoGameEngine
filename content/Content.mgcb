@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin AI/base/testAI.lua
+/copy:AI/base/testAI.lua
+
 #begin DebugFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

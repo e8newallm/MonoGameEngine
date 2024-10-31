@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GameMono;
 
@@ -28,7 +29,7 @@ public class Game1 : Game
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
+        Content.RootDirectory = "content";
         IsMouseVisible = true;
     }
 
@@ -46,6 +47,14 @@ public class Game1 : Game
             mat.Value.Texture = Content.Load<Texture2D>(mat.Value.TextureName);
         }
         font = Content.Load<SpriteFont>("DebugFont");
+
+        foreach(string dir in Directory.GetDirectories(Content.RootDirectory + @"/AI/"))
+        {
+            foreach(string luaFile in Directory.GetFiles(dir))
+            {
+                Console.WriteLine("luaFile " + luaFile + " in " + dir);
+            }
+        }
     }
 
     protected override void Update(GameTime gameTime)
@@ -71,6 +80,7 @@ public class Game1 : Game
         if(cam.Y < 0.0f) cam.Y = 0.0f;
         if(cam.Y + cam.GetCameraHeight() > terrain.Height*Constants.CELLSIZE) cam.Y = (float)terrain.Height*Constants.CELLSIZE - cam.GetCameraHeight();
 
+        //Temporary debugging code
         Vector2 cell = cam.ViewToCell(mouse);
         if((int)cell.X != -1 && this.IsActive)
         {
@@ -106,6 +116,7 @@ public class Game1 : Game
         testObj.Draw(_spriteBatch);
         _spriteBatch.End();
 
+        //Draw UI
         _spriteBatch.Begin();
         _spriteBatch.DrawString(font, cam.ViewToCell(prevMouse).ToString(), new Vector2(10, 10), Color.White);
         if(GameState.Paused) _spriteBatch.DrawString(font, "Paused!", new Vector2(10, 60), Color.White);
