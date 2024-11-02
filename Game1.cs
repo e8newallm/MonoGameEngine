@@ -52,7 +52,10 @@ public class Game1 : Game
         {
             foreach(string luaFile in Directory.GetFiles(dir))
             {
-                Console.WriteLine("luaFile " + luaFile + " in " + dir);
+                string scriptName = Path.GetFileName(dir) + "-" + Path.GetFileName(luaFile);
+                Console.WriteLine("Adding AI file: " + scriptName);
+                AI.RegisterAI(File.ReadAllText(luaFile), scriptName);
+                AI.CreateAI(scriptName);
             }
         }
     }

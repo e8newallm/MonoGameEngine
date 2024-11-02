@@ -1,1 +1,3 @@
-test lua
+function init()
+    print("TEST")
+end
