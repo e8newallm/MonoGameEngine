@@ -13,10 +13,34 @@ class AI(string luaScript) : LuaModule(luaScript)
         init.Call();
     }
 
-    readonly private static Dictionary<string, string> scripts = [];
-    public static void RegisterAI(string script, string name)
+    private static bool VerifyAI(string script)
     {
-        scripts.Add(name, script);
+        Lua state = new();
+        state.DoString(script);
+        if(state.GetString("FILETYPE") != "AI")
+        {
+            Console.WriteLine("FILETYPE isn't \"AI\"");
+            return false;
+        }
+
+        if(state.GetFunction("init") == null)
+        {
+            Console.WriteLine("no init function found!");
+            return false;
+        }
+
+        return true;
+    }
+
+    readonly private static Dictionary<string, string> scripts = [];
+    public static bool RegisterAI(string script, string name)
+    {
+        if(VerifyAI(script))
+        {
+            scripts.Add(name, script);
+            return true;
+        }
+        return false;
     }
 
     public static AI CreateAI(string name)
