@@ -1,1 +1,1 @@
-dotnet build GameMono.csproj
+dotnet build GameMono.csproj -v q

@@ -1,5 +1,11 @@
-FILETYPE = "AI"
+SCRIPTTYPE = "AdI"
 
 function init()
-    print("TEST")
+    print("INIT")
 end
+
+function deinit()
+    print("DEINIT")
+end
+
+--init = 2
