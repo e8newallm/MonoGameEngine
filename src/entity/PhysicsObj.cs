@@ -4,22 +4,23 @@ using System;
 
 namespace GameMono;
 
-class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
+public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
 {
     public const float Gravity = 0.0981f;
 
-    protected Vector2 _velocity = new(0.0f, 0.0f);
-    public Vector2 Velocity { get => _velocity; set => _velocity = value; }
+    public Vector2 _velocity = new(0.0f, 0.0f);
+    public float XVel { get => _velocity.X; set => _velocity.X = value; }
+    public float YVel { get => _velocity.Y; set => _velocity.Y = value; }
 
     public virtual void Update(World terrain, GameTime gameTime)
     {
-        Console.WriteLine("-------------------------------------");
-        Vector2 OldPosition = new(_position.X, _position.Y);
+        //Console.WriteLine("-------------------------------------");
+        Vector2 OldPosition = new(X, Y);
 
         if(!OnGround(terrain))
-            _velocity.Y += Gravity;
-        Console.WriteLine("Velocity: " + _velocity);
-        Console.WriteLine("Position before: " + GetBody());
+            YVel += Gravity;
+        //Console.WriteLine("Velocity: " + _velocity);
+        //Console.WriteLine("Position before: " + GetBody());
 
         Vector2 scaledVelocity = _velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * Constants.CELLSIZE;
         uint steps = 1;
@@ -31,28 +32,28 @@ class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
             steps = (uint)Math.Ceiling(magnitude);
             stepSize = new(scaledVelocity.X / steps, scaledVelocity.Y / steps);
         }
-        Console.WriteLine("Steps: " + steps);
+        //Console.WriteLine("Steps: " + steps);
 
         for(uint i = 0; i < steps; i++)
         {
             //HORIZONTAL MOVEMENT
-            _position.X += stepSize.X;
-            if(_position.X < 0.0f)
+            X += stepSize.X;
+            if(X < 0.0f)
             {
                 _velocity.X = 0.0f;
                 stepSize.X = 0.0f;
-                _position.X = 0.0f;
+                X = 0.0f;
             }
-            if(_position.X + _size.X > terrain.Width)
+            if(X + Width > terrain.Width)
             {
-                _velocity.X = 0.0f;
+                XVel = 0.0f;
                 stepSize.X = 0.0f;
-                _position.X = terrain.Width - _size.X;
+                X = terrain.Width - Width;
             }
 
-            for(uint x = (uint)_position.X; x <= (uint)(_position.X + _size.X); x++)
+            for(uint x = (uint)X; x <= (uint)(X + Width); x++)
             {
-                for(uint y = (uint)_position.Y; y <= (uint)(_position.Y + _size.Y); y++)
+                for(uint y = (uint)Y; y <= (uint)(Y + Height); y++)
                 {
                     if(terrain[x, y].IsSomething)
                     {
@@ -62,11 +63,11 @@ class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
 
                         if(intersection.Width > 0)
                         {
-                            if(x > _position.X)
-                                _position.X -= (float)intersection.Width/Constants.CELLSIZE;
+                            if(x > X)
+                                X -= (float)intersection.Width/Constants.CELLSIZE;
                             else
-                                _position.X += (float)intersection.Width/Constants.CELLSIZE;
-                            _velocity.X = 0;
+                                X += (float)intersection.Width/Constants.CELLSIZE;
+                            XVel = 0;
                             stepSize.X = 0;
                         }
                     }
@@ -74,22 +75,22 @@ class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
             }
 
             //VERTICAL MOVEMENT
-            _position.Y += stepSize.Y;
-            if(_position.Y < 0.0f)
+            Y += stepSize.Y;
+            if(Y < 0.0f)
             {
                 stepSize.Y = 0.0f;
-                _velocity.Y = 0.0f;
-                _position.Y = 0.0f;
+                YVel = 0.0f;
+                Y = 0.0f;
             }
-            if(_position.Y + _size.Y > terrain.Height)
+            if(Y + Height > terrain.Height)
             {
                 stepSize.Y = 0.0f;
-                _velocity.Y = 0.0f;
-                _position.Y = terrain.Height - _size.Y;
+                YVel = 0.0f;
+                Y = terrain.Height - Height;
             }
-            for(uint x = (uint)_position.X; x <= (uint)(_position.X + _size.X); x++)
+            for(uint x = (uint)X; x <= (uint)(X + Width); x++)
             {
-                for(uint y = (uint)_position.Y; y <= (uint)(_position.Y + _size.Y); y++)
+                for(uint y = (uint)Y; y <= (uint)(Y + Height); y++)
                 {
                     if(terrain[x, y].IsSomething)
                     {
@@ -98,19 +99,19 @@ class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
                         Rectangle intersection = Rectangle.Intersect(GetBody(), cell);
                         if(intersection.Width > 0)
                         {
-                            if(y > _position.Y)
-                                _position.Y -= (float)intersection.Height/Constants.CELLSIZE;
+                            if(y > Y)
+                                Y -= (float)intersection.Height/Constants.CELLSIZE;
                             else
-                                _position.Y += (float)intersection.Height/Constants.CELLSIZE;
+                                Y += (float)intersection.Height/Constants.CELLSIZE;
 
                             stepSize.Y = 0.0f;
-                            _velocity.Y = 0.0f;
+                            YVel = 0.0f;
                         }
                     }
                 }
             }
         }
-        Console.WriteLine("Position after: " + GetBody());
+        //Console.WriteLine("Position after: " + GetBody());
     }
 
     public virtual void Draw(SpriteBatch spriteBatch)
@@ -120,12 +121,12 @@ class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
 
     public virtual bool OnGround(World terrain)
     {
-        uint y = (uint)(_position.Y + _size.Y);
+        uint y = (uint)(Y + Height);
 
         if(y == terrain.Height)
             return true;
 
-        for(uint x = (uint)_position.X; x < (uint)(_position.X + _size.X); x++)
+        for(uint x = (uint)X; x < (uint)(X + Width); x++)
         {
             if(terrain[x, y].IsSomething)
                 return true;

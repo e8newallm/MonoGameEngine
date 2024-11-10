@@ -15,25 +15,27 @@ abstract class LuaModule
         ScriptName = luaScript;
         state.DoString(scripts[luaScript]);
         IsValid = BaseValidateScript();
-        if(IsValid) InitScript();
+        InitScript();
+    }
+
+    public void RegThis(object linkedObject)
+    {
+        state["this"] = linkedObject;
     }
 
     ~LuaModule()
     {
         DeinitScript();
-
     }
 
     protected virtual void InitScript()
     {
-        Console.WriteLine("EXECUTING INIT");
-        (state["init"] as LuaFunction).Call();
+        if(IsValid) (state["init"] as LuaFunction).Call();
     }
 
     protected virtual void DeinitScript()
     {
-        Console.WriteLine("EXECUTING DEINIT");
-        (state["deinit"] as LuaFunction).Call();
+        if(IsValid) (state["deinit"] as LuaFunction).Call();
     }
 
     protected bool BaseValidateScript()

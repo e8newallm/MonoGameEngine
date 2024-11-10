@@ -2,16 +2,21 @@ using Microsoft.Xna.Framework;
 
 namespace GameMono;
 
-class Entity(Vector2 position, Vector2 size)
+public class Entity(Vector2 position, Vector2 size)
 {
     protected Vector2 _position = position;
     protected Vector2 _size = size;
 
-    public Vector2 Position { get => _position; set => _position = value; }
-    public Vector2 Size     { get => _size;     set => _size = value;     }
+    public Vector2 Position { get => _position;   set => _position = value;   }
+    public float X          { get => _position.X; set => _position.X = value; }
+    public float Y          { get => _position.Y; set => _position.Y = value; }
+
+    public Vector2 Size     { get => _size;       set => _size = value;       }
+    public float Width      { get => _size.X;     set => _size.X = value;     }
+    public float Height     { get => _size.Y;     set => _size.Y = value;     }
 
     public Rectangle GetBody()
     {
-        return new((int)(_position.X*Constants.CELLSIZE), (int)(_position.Y*Constants.CELLSIZE), (int)(_size.X*Constants.CELLSIZE), (int)(_size.Y*Constants.CELLSIZE));
+        return new((int)(X*Constants.CELLSIZE), (int)(Y*Constants.CELLSIZE), (int)(Width*Constants.CELLSIZE), (int)(Height*Constants.CELLSIZE));
     }
 }
