@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace GameMono;
 
-public class World(int width, int height, Func<int, int, Material[,]> Surface)
+public class World(int width, int height, TerrainGenerator Surface)
 {
-    readonly Material[,] Map = TerrainGen.genTerrain(width, height, Surface);
+    readonly Material[,] Map = TerrainGen.GenTerrain(width, height, Surface);
     private readonly int _width = width;
     private readonly int _height = height;
     public int Width { get => _width; }

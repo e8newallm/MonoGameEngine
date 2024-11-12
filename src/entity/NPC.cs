@@ -15,7 +15,6 @@ public class NPC : PhysicsObj
     public override void Update(World terrain, GameTime gameTime)
     {
         ai.Update(terrain, gameTime);
-        Console.WriteLine(XVel);
         base.Update(terrain, gameTime);
     }
 }

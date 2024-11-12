@@ -15,7 +15,6 @@ abstract class LuaModule
         ScriptName = luaScript;
         state.DoString(scripts[luaScript]);
         IsValid = BaseValidateScript();
-        InitScript();
     }
 
     public void RegThis(object linkedObject)
@@ -23,38 +22,11 @@ abstract class LuaModule
         state["this"] = linkedObject;
     }
 
-    ~LuaModule()
-    {
-        DeinitScript();
-    }
-
-    protected virtual void InitScript()
-    {
-        if(IsValid) (state["init"] as LuaFunction).Call();
-    }
-
-    protected virtual void DeinitScript()
-    {
-        if(IsValid) (state["deinit"] as LuaFunction).Call();
-    }
-
     protected bool BaseValidateScript()
     {
         if(state["SCRIPTTYPE"].GetType() != typeof(string))
         {
             Console.WriteLine(ScriptName + " does not contain a SCRIPTTYPE identifier!");
-            return false;
-        }
-
-        if(!IsFunction("init"))
-        {
-            Console.WriteLine(ScriptName + " does not contain an init function!");
-            return false;
-        }
-
-        if(!IsFunction("deinit"))
-        {
-            Console.WriteLine(ScriptName + " does not contain an deinit function!");
             return false;
         }
 

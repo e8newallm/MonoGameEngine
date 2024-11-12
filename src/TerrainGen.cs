@@ -5,23 +5,13 @@ using Microsoft.Xna.Framework;
 
 namespace GameMono;
 
+public delegate void TerrainGenerator(int width, int height, ref Material[,] data);
+
 public class TerrainGen
 {
-    public static Material[,] genTerrain(int width, int height, Func<int, int, Material[,]> Surface)
+    public static Material[,] GenTerrain(int width, int height, TerrainGenerator Surface)
     {
-        Material[,] data = Surface(width, height);
-        return data;
-    }
-
-}
-
-public static class TerrainGenTypes
-{
-    public static Material[,] surfaceGen(int width, int height)
-    {
-        Material[,] data = new Material[width+1, height+1];
-        Random rand = new Random();
-
+        Material[,] data = new Material[width, height];
         for(int x = 0; x < data.GetLength(0); x++)
         {
             for(int y = 0; y < data.GetLength(1); y++)
@@ -30,12 +20,20 @@ public static class TerrainGenTypes
             }
 
         }
+        Surface(width, height, ref data);
+        return data;
+    }
+}
+
+public static class TerrainGenTypes
+{
+    public static void SurfaceGen(int width, int height, ref Material[,] data)
+    {
+        Random rand = new Random();
 
         float ratio = (float)height/width;
 
-        List<Vector2> heightmap = new List<Vector2>();
-        heightmap.Insert(0, new Vector2(0, height*0.2f));
-        heightmap.Insert(1, new Vector2(width, height*0.2f));
+        List<Vector2> heightmap = [new Vector2(0, height*0.2f), new Vector2(width, height*0.2f)];
 
         while(heightmap.Count < width)
         {
@@ -43,7 +41,6 @@ public static class TerrainGenTypes
             {
                 if(heightmap[i].X > heightmap[i-1].X + 1)
                 {
-
                     float centerpoint = (heightmap[i].X + heightmap[i-1].X) / 2;
                     float gapSize = heightmap[i].X - heightmap[i-1].X;
                     float heightInterpol =((heightmap[i].Y + heightmap[i-1].Y) / 2);
@@ -61,7 +58,5 @@ public static class TerrainGenTypes
             }
 
         }
-
-        return data;
     }
 }

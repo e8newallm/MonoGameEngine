@@ -20,11 +20,11 @@ public class Game1 : Game
 
     private Camera cam;
 
-    private readonly World terrain = new(1000, 600, TerrainGenTypes.surfaceGen);
+    private readonly World terrain = new(1000, 600, TerrainGenTypes.SurfaceGen);
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
 
-    private readonly Player testObj = new(new(4.0f, 0.0f), new(1.5f, 2.5f));
+    private readonly Player testObj = new(new(900.0f, 0.0f), new(1.5f, 2.5f));
     private NPC testNPC;
 
     public Game1()

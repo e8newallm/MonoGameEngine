@@ -44,11 +44,11 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
                 stepSize.X = 0.0f;
                 X = 0.0f;
             }
-            if(X + Width > terrain.Width)
+            if(X + Width >= terrain.Width - 0.001f)
             {
                 XVel = 0.0f;
                 stepSize.X = 0.0f;
-                X = terrain.Width - Width;
+                X = terrain.Width - Width - 0.001f;
             }
 
             for(uint x = (uint)X; x <= (uint)(X + Width); x++)
@@ -82,11 +82,11 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
                 YVel = 0.0f;
                 Y = 0.0f;
             }
-            if(Y + Height > terrain.Height)
+            if(Y + Height > terrain.Height - 0.001f)
             {
                 stepSize.Y = 0.0f;
                 YVel = 0.0f;
-                Y = terrain.Height - Height;
+                Y = terrain.Height - Height - 0.001f;
             }
             for(uint x = (uint)X; x <= (uint)(X + Width); x++)
             {
@@ -126,7 +126,7 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
         if(y == terrain.Height)
             return true;
 
-        for(uint x = (uint)X; x < (uint)(X + Width); x++)
+        for(uint x = (uint)X; x <= (uint)(X + Width); x++)
         {
             if(terrain[x, y].IsSomething)
                 return true;
