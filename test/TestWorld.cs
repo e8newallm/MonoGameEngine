@@ -6,10 +6,16 @@ public class Tests
     public class TestWorld
     {
         private World? testWorld;
-        Material TestMaterial = new("test");
-        Material TestMaterialTwo = new("testTwo");
+        static Material TestMaterial = new("test");
         public static void TestBasicTerrainGen(int width, int height, ref Material[,] data)
         {
+        }
+
+        public static void TestCheckerboardTerrainGen(int width, int height, ref Material[,] data)
+        {
+            for(uint x = 0; x < width; x++)
+                for(uint y = 0; y < height; y++)
+                    if(x + y % 2 == 0) data[x, y] = TestMaterial;
         }
 
         [SetUp]
@@ -35,6 +41,26 @@ public class Tests
             for(uint x = 0; x < testWorld.Width; x++)
                 for(uint y = 0; y < testWorld.Height; y++)
                     Assert.That(testWorld[x, y], Is.EqualTo(Material.Nothing));
+        }
+
+        [Test]
+        public void TestMaterialUsage()
+        {
+            testWorld = new(10, 12, TestCheckerboardTerrainGen);
+            Assert.That(testWorld.Width, Is.EqualTo(10));
+            Assert.That(testWorld.Height, Is.EqualTo(12));
+            Assert.That(() => testWorld[0, 0], Throws.Nothing);
+            Assert.That(() => testWorld[0, 11], Throws.Nothing);
+            Assert.That(() => testWorld[9, 0], Throws.Nothing);
+            Assert.That(() => testWorld[9, 11], Throws.Nothing);
+            Assert.That(() => testWorld[10, 11], Throws.Exception);
+            Assert.That(() => testWorld[9, 12], Throws.Exception);
+            Assert.That(() => testWorld[45, 234], Throws.Exception);
+
+            for(uint x = 0; x < testWorld.Width; x++)
+                for(uint y = 0; y < testWorld.Height; y++)
+                    if(x + y % 2 == 0) Assert.That(testWorld[x, y], Is.EqualTo(TestMaterial));
+                    else               Assert.That(testWorld[x, y], Is.EqualTo(Material.Nothing));
         }
     }
 }

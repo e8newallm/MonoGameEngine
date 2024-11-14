@@ -20,11 +20,11 @@ public class Game1 : Game
 
     private Camera cam;
 
-    private readonly World terrain = new(1000, 600, TerrainGenTypes.SurfaceGen);
+    private readonly World terrain;
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
 
-    private readonly Player testObj = new(new(900.0f, 0.0f), new(1.5f, 2.5f));
+    private readonly Player testObj = new(new(900.0f, 0.0f), new(2.0f, 2.5f));
     private NPC testNPC;
 
     public Game1()
@@ -32,6 +32,7 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "content";
         IsMouseVisible = true;
+        terrain = new(1000, 600, TerrainGenTypes.SurfaceGen);
     }
 
     protected override void Initialize()
@@ -76,7 +77,7 @@ public class Game1 : Game
         if(!GameState.Paused)
         {
             testObj.Update(terrain, gameTime);
-            testNPC.Update(terrain, gameTime);
+            //testNPC.Update(terrain, gameTime);
         }
 
         GameState.DebugUnstep();
