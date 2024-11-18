@@ -6,7 +6,7 @@ namespace GameMono;
 
 class Player(Vector2 position, Vector2 size) : PhysicsObj(position, size)
 {
-    const float MAXSPEED = 1.2f;
+    const float MAXSPEED = 30.0f;
 
     public override void Update(World terrain, GameTime gameTime)
     {
@@ -19,10 +19,10 @@ class Player(Vector2 position, Vector2 size) : PhysicsObj(position, size)
             _velocity.X = (MAXSPEED + _velocity.X) / 2;
 
         else
-            _velocity.X = 0;
+            _velocity.X = (_velocity.X) / 2;
 
         if(keyboard.IsKeyDown(Keys.Space) && OnGround(terrain))
-            _velocity.Y -= 2.0f;
+            _velocity.Y -= 70.0f;
 
         base.Update(terrain, gameTime);
     }

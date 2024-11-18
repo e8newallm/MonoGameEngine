@@ -24,7 +24,7 @@ public class Game1 : Game
     private KeyboardState prevKeyboard;
     private MouseState prevMouse;
 
-    private readonly Player testObj = new(new(900.0f, 0.0f), new(2.0f, 2.5f));
+    private readonly Player testObj = new(new(900.0f, 0.0f), new(1.5f, 2.5f));
     private NPC testNPC;
 
     public Game1()
