@@ -5,8 +5,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GameMono;
 
-public class Camera(Viewport view)
+public class Camera(Viewport view, int scale)
 {
+    private readonly int _scale = scale;
     private float _zoom = 0.2f;
     private float _x = 0.0f;
     private float _y = 0.0f;
@@ -48,7 +49,7 @@ public class Camera(Viewport view)
     public Vector2 ViewToCell(MouseState mouse)
     {
         if(viewport.Bounds.Contains(mouse.Position))
-            return new Vector2((int)((mouse.X + (_x*_zoom)) / (Constants.CELLSIZE * _zoom)), (int)((mouse.Y + (_y*_zoom)) / (Constants.CELLSIZE * _zoom)));
+            return new Vector2((int)((mouse.X + (_x*_zoom)) / (_scale * _zoom)), (int)((mouse.Y + (_y*_zoom)) / (_scale* _zoom)));
         else
             return new Vector2(-1.0f, -1.0f);
     }
@@ -60,7 +61,7 @@ public class Camera(Viewport view)
 
     public void MoveTo(Vector2 position)
     {
-        _x = position.X * Constants.CELLSIZE - GetCameraWidth()/2;
-        _y = position.Y * Constants.CELLSIZE - GetCameraHeight()/2;
+        _x = position.X * _scale - GetCameraWidth()/2;
+        _y = position.Y * _scale - GetCameraHeight()/2;
     }
 }

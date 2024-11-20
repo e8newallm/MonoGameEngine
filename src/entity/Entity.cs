@@ -15,8 +15,8 @@ public class Entity(Vector2 position, Vector2 size)
     public float Width      { get => _size.X;     set => _size.X = value;     }
     public float Height     { get => _size.Y;     set => _size.Y = value;     }
 
-    public Rectangle GetBody()
+    public Rectangle GetBody(int scale)
     {
-        return new((int)(X*Constants.CELLSIZE), (int)(Y*Constants.CELLSIZE), (int)(Width*Constants.CELLSIZE), (int)(Height*Constants.CELLSIZE));
+        return new((int)(X*scale), (int)(Y*scale), (int)(Width*scale), (int)(Height*scale));
     }
 }

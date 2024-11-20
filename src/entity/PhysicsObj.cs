@@ -14,7 +14,6 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
 
     public virtual void Update(World terrain, GameTime gameTime)
     {
-        Vector2 OldPosition = new(X, Y);
         if(!OnGround(terrain))
             YVel += Gravity;
 
@@ -43,9 +42,9 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
                 X = (float)(terrain.Width - Width);
             }
 
-            for(uint x = (uint)X; x <= (uint)(X + Width - 0.01f); x++)
+            for(int x = (int)X; x <= (int)(X + Width - 0.01f); x++)
             {
-                for(uint y = (uint)Y; y <= (uint)(Y + Height - 0.01f); y++)
+                for(int y = (int)Y; y <= (int)(Y + Height - 0.01f); y++)
                 {
                     if(terrain[x, y].IsSomething)
                     {
@@ -73,9 +72,9 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
                 YVel = 0.0f;
                 Y = terrain.Height - Height;
             }
-            for(uint x = (uint)X; x <= (uint)(X + Width - 0.01f); x++)
+            for(int x = (int)X; x <= (int)(X + Width - 0.01f); x++)
             {
-                for(uint y = (uint)Y; y <= (uint)(Y + Height - 0.01f); y++)
+                for(int y = (int)Y; y <= (int)(Y + Height - 0.01f); y++)
                 {
                     if(terrain[x, y].IsSomething)
                     {
@@ -94,17 +93,17 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(Material.Mats["Dirt"].Texture, GetBody(), Color.White);
+        spriteBatch.Draw(Material.Mats["Dirt"].Texture, GetBody(50), Color.White);
     }
 
     public virtual bool OnGround(World terrain)
     {
-        uint y = (uint)(Y + Height);
+        int y = (int)(Y + Height);
 
         if(y == terrain.Height)
             return true;
 
-        for(uint x = (uint)X; x <= (uint)(X + Width - 0.001f); x++)
+        for(int x = (int)X; x <= (int)(X + Width - 0.001f); x++)
         {
             if(terrain[x, y].IsSomething)
                 return true;

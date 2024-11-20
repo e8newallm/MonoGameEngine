@@ -23,6 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-      <ProjectReference Include="../GameMono.csproj" />
+      <ProjectReference Include="../MonoGameEngine.csproj" />
   </ItemGroup>
 </Project>

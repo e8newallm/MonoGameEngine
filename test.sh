@@ -1,1 +1,3 @@
-dotnet test test/test.csproj
+if ./build.sh; then
+    dotnet test test/test.csproj
+fi

@@ -1,1 +1,1 @@
-dotnet build GameMono.csproj -v q
+dotnet build MonoGameEngine.csproj -v q & dotnet build test/test.csproj -v q
