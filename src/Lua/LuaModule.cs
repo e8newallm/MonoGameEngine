@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GameMono;
 
-abstract class LuaModule
+public abstract class LuaModule
 {
     public readonly Lua state = new();
     protected string ScriptName {get; private set;}
