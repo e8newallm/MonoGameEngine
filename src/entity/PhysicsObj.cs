@@ -4,7 +4,7 @@ using System;
 
 namespace GameMono;
 
-public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
+public class PhysicsObj(Vector2 position, Vector2 size, Texture texture = null) : Entity(position, size, texture)
 {
     public const float Gravity = 5.0f;
 
@@ -89,11 +89,6 @@ public class PhysicsObj(Vector2 position, Vector2 size) : Entity(position, size)
                 }
             }
         }
-    }
-
-    public virtual void Draw(SpriteBatch spriteBatch)
-    {
-        spriteBatch.Draw(Material.Mats["Dirt"].Texture, GetBody(50), Color.White);
     }
 
     public virtual bool OnGround(World terrain)

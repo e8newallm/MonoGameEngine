@@ -1,11 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GameMono;
 
-public class Entity(Vector2 position, Vector2 size)
+public class Entity(Vector2 position, Vector2 size, Texture texture = null)
 {
     protected Vector2 _position = position;
     protected Vector2 _size = size;
+    protected Texture _texture = texture ?? Texture.NoTexture;
 
     public Vector2 Position { get => _position;   set => _position = value;   }
     public float X          { get => _position.X; set => _position.X = value; }
@@ -15,8 +17,14 @@ public class Entity(Vector2 position, Vector2 size)
     public float Width      { get => _size.X;     set => _size.X = value;     }
     public float Height     { get => _size.Y;     set => _size.Y = value;     }
 
-    public Rectangle GetBody(int scale)
+    public virtual void Draw(SpriteBatch spriteBatch)
     {
-        return new((int)(X*scale), (int)(Y*scale), (int)(Width*scale), (int)(Height*scale));
+        _texture.Draw(spriteBatch, GetBody());
+    }
+
+    public Rectangle GetBody()
+    {
+        return new((int)(X*GameState.Scale), (int)(Y*GameState.Scale),
+                    (int)(Width*GameState.Scale), (int)(Height*GameState.Scale));
     }
 }
