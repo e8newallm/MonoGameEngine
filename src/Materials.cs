@@ -12,7 +12,7 @@ public class Material(String textureName)
     public String TextureName { get; } = textureName;
     public bool IsNothing { get => _isNothing; }
     public bool IsSomething { get => _isSomething; }
-    public Texture2D Texture {get; set;}
+    public Texture Tex {get; set;}
 
     static readonly public Dictionary<String, Material> Mats = new()
     {

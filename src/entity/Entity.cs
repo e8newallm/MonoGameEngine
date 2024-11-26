@@ -7,7 +7,7 @@ public class Entity(Vector2 position, Vector2 size, Texture texture = null)
 {
     protected Vector2 _position = position;
     protected Vector2 _size = size;
-    protected Texture _texture = texture ?? Texture.NoTexture;
+    protected Texture _texture = texture;
 
     public Vector2 Position { get => _position;   set => _position = value;   }
     public float X          { get => _position.X; set => _position.X = value; }
@@ -19,7 +19,7 @@ public class Entity(Vector2 position, Vector2 size, Texture texture = null)
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        _texture.Draw(spriteBatch, GetBody());
+        _texture?.Draw(spriteBatch, GetBody());
     }
 
     public Rectangle GetBody()

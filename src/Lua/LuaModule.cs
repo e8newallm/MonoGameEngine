@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GameMono;
 
-public abstract class LuaModule
+public abstract class LuaModule : DataStore<string>
 {
     public readonly Lua state = new();
     protected string ScriptName {get; private set;}
@@ -13,7 +13,7 @@ public abstract class LuaModule
     protected LuaModule(string luaScript)
     {
         ScriptName = luaScript;
-        state.DoString(scripts[luaScript]);
+        state.DoString(Data[luaScript]);
         IsValid = BaseValidateScript();
     }
 
@@ -37,11 +37,5 @@ public abstract class LuaModule
     public bool IsFunction(string func)
     {
         return state[func] != null && state[func].GetType() == typeof(NLua.LuaFunction);
-    }
-
-    readonly private static Dictionary<string, string> scripts = [];
-    public static void RegisterScript(string script, string name)
-    {
-        scripts.Add(name, script);
     }
 }
